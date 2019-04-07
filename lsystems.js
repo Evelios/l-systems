@@ -11,23 +11,34 @@ const quaternaryColor = tinycolor("#479030");
 // Globals
 let width;
 let height;
+let lsys;
 let rng;
 
 var params = {
-  seed : 1
+  seed : 1,
+  axiom : 'ABC',
+  productions : {
+    'B': 'F+F',
+    'B': 'BB'
+  },
 };
 
 function setup() {
-  resize();
+  lsys = new LSystem({});
+  setupSeed();
   setUpGui();
+  resize();
   noLoop();
 }
 
 function resize() {
   width  = document.body.clientWidth  || window.innerWidth;
   height = document.body.clientHeight || window.innerHeight;
-
   createCanvas(width, height);
+}
+
+function resizeAndRedraw() {
+  resize();
   draw();
 }
 
@@ -35,6 +46,7 @@ function setUpGui() {
   const gui = new dat.GUI();
 
   gui.add(params, "seed", 1, 5, 1).name("RNG Seed").onChange(setupSeed);
+  gui.add(params, "axiom").name("Axiom").onChange(draw);
 }
 
 function setupSeed() {
@@ -42,5 +54,18 @@ function setupSeed() {
 }
 
 function draw() {
-    background(bgColor.toHexString());
+  background(bgColor.toHexString());
+
+  const eles = lsystem();
+
+  console.log(eles);
+}
+
+function lsystem() {
+  lsys.setAxiom(params.axiom);
+  for (key in params.productions) {
+    lsys.setProduction(key, params.productions[key]);
+  }
+
+  return lsys.iterate(3);
 }

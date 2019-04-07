@@ -20,5 +20,8 @@
     "grunt": "^1.0.4",
     "grunt-contrib-connect": "^2.0.0",
     "grunt-contrib-watch": "^1.1.0"
+  },
+  "dependencies": {
+    "lindenmayer": "^1.5.0"
   }
 }
