@@ -16,15 +16,14 @@ let rng;
 
 var params = {
   seed : 1,
-  axiom : 'ABC',
+  iterates : 1,
+  axiom : 'F++F++F',
   productions : {
-    'B': 'F+F',
-    'B': 'BB'
+    'F': 'F-F++F-F',
   },
 };
 
 function setup() {
-  lsys = new LSystem({});
   setupSeed();
   setUpGui();
   resize();
@@ -43,10 +42,11 @@ function resizeAndRedraw() {
 }
 
 function setUpGui() {
-  const gui = new dat.GUI();
+  const gui = new dat.GUI({name : 'L-Systems'});
 
   gui.add(params, "seed", 1, 5, 1).name("RNG Seed").onChange(setupSeed);
   gui.add(params, "axiom").name("Axiom").onChange(draw);
+  gui.add(params, "iterates", 1, 5, 1).name("Iterates").onChange(draw);
 }
 
 function setupSeed() {
@@ -55,17 +55,27 @@ function setupSeed() {
 
 function draw() {
   background(bgColor.toHexString());
+  stroke(primaryColor.toHexString());
+  strokeWeight(2);
 
-  const eles = lsystem();
+  push();
+  translate(width / 2, height / 2);
 
-  console.log(eles);
-}
+  lsys = new LSystem({
+    axiom       : params.axiom,
+    productions : params.productions,
+    finals      : {
+      '+' : () => { rotate( Math.PI * 1/3); },
+      '-' : () => { rotate(-Math.PI * 1/3); },
+      'F' : () => {
+        const len = 40 / (lsys.iterations + 1);
+        line(0, 0, 0, len);
+        translate(0, len);
+      }
+    },
+  });
 
-function lsystem() {
-  lsys.setAxiom(params.axiom);
-  for (key in params.productions) {
-    lsys.setProduction(key, params.productions[key]);
-  }
-
-  return lsys.iterate(3);
+  lsys.iterate(params.iterates);
+  lsys.final();
+  pop();
 }
