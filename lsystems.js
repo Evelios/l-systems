@@ -18,12 +18,17 @@ var params = {
 };
 
 function setup() {
-  width  = document.body.clientWidth || window.innerWidth;
+  resize();
+  setUpGui();
+  noLoop();
+}
+
+function resize() {
+  width  = document.body.clientWidth  || window.innerWidth;
   height = document.body.clientHeight || window.innerHeight;
 
   createCanvas(width, height);
-  setUpGui();
-  noLoop();
+  draw();
 }
 
 function setUpGui() {
